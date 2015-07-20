@@ -1,10 +1,10 @@
 require "pry"
 
 class Cave
-  attr_reader :target_water_units, :current_water_units, :cave_state
+  attr_reader :target_units, :current_water_units, :cave_state
 
   def initialize(input)
-    @target_water_units = input.readline.to_i
+    @target_units = input.readline.to_i
     @cave_state = Array.new
     setup_cave(input)
   end
@@ -13,7 +13,7 @@ class Cave
     cave_state.map { |row| row.count("~") }.reduce(:+)
   end
 
-  def pump(target_units)
+  def pump
     units_left = target_units - current_water_units
 
     starting_pos = [0, 0]
@@ -37,28 +37,15 @@ class Cave
     end
   end
 
-  def print_state
-    cave_state.map { |row| row.join("") + "\n" }
-  end
-
   def depths
     cave_state.transpose.map do |col|
-      if col.include?(" ") && col.include?("~")
-        if col.rindex(" ") > col.rindex("~")
-          "~"
-        else
-          col.count("~")
-        end
+      if (col.include?(" ") && col.include?("~")) && (col.rindex(" ") > col.rindex("~"))
+        "~"
       else
         col.count("~")
       end
     end
-  end
-
-  def save_depths(filename)
-    File.open(filename, "w") do |file|
-      file.puts depths.join(" ")
-    end
+    .join(" ")
   end
 
   private

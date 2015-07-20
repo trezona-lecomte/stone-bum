@@ -4,45 +4,40 @@ require "pry"
 
 RSpec.describe Cave do
   let(:cave)         { Cave.new(input) }
-  let(:input)        { StringIO.new(simple_cave) }
-  let(:target_units) { 100 }
+  let(:input)        { StringIO.new(cave_type) }
 
-  context "when given an input file with 100 water units" do
-    it "sets the target water units" do
-      expect(cave.target_water_units).to eq(100)
-    end
+  describe "#pump" do
+    context "when asked for depths for a simple cave" do
+      let(:cave_type) { simple_cave }
 
-    it "sets the current water units" do
-      expect(cave.current_water_units).to eq(1)
-    end
+      before { cave.pump }
 
-    context "when pumped" do
-      before { cave.pump(target_units) }
-
-      it "has current water units == target_water_units" do
-        expect(cave.current_water_units).to eq(cave.target_water_units)
+      it "returns the correct depths" do
+        expect(cave.depths).to eq(simple_depths)
       end
     end
 
-    context "when pumped with 3 units" do
-      before { cave.pump(3) }
+    context "when asked for depths for a complex cave" do
+      let(:cave_type) { complex_cave }
 
-      it "pumps the first available column" do
-        expect(cave.print_state).to eq(cave_pumped_with_3_units)
-      end
-    end
+      before { cave.pump }
 
-    context "when pumped with 8 units" do
-      before { cave.pump(8) }
-
-      it "pumps the first available column" do
-        expect(cave.print_state).to eq(cave_pumped_with_8_units)
+      it "returns the correct depths" do
+        expect(cave.depths).to eq(complex_depths)
       end
     end
   end
 
+  def complex_depths
+    "1 12 1 5 8 8 9 10 17 17 18 20 24 24 24 24 24 24 32 32 32 32 32 32 32 32 9 5 1 1 9 11 29 30 32 32 32 32 32 22 20 19 18 13 10 10 8 4 4 3 3 19 19 20 21 23 23 24 24 26 32 32 32 32 32 32 32 22 22 22 21 21 21 6 6 2 1 1 1 1 1 1 1 32 30 30 30 8 8 5 5 2 2 2 8 19 19 19 20 21 26 26 27 28 28 29 29 30 30 30 30 30 30 30 30 30 30 30 30 30 17 16 15 15 15 11 8 8 6 6 6 1 1 1 1 ~ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+  end
+
+  def simple_depths
+    "1 2 2 4 4 4 4 6 6 6 1 1 1 1 4 3 3 4 4 4 4 5 5 5 5 5 2 2 1 1 0 0"
+  end
+
   def simple_cave
-"100
+    "100
 
 ################################
 ~                              #
@@ -55,34 +50,8 @@ RSpec.describe Cave do
 "
   end
 
-  def cave_pumped_with_3_units
-"
-################################
-~~                             #
-#~        ####                 #
-###       ####                ##
-###       ####              ####
-#######   #######         ######
-#######   ###########     ######
-################################
-"
-  end
-
-  def cave_pumped_with_8_units
-"
-################################
-~~                             #
-#~~~      ####                 #
-###~      ####                ##
-###~~~    ####              ####
-#######   #######         ######
-#######   ###########     ######
-################################
-"
-  end
-
   def complex_cave
-"2461
+    "2461
 
 #####################################################################################################################################################################################################
 ~                                                                                                                                                                                                   #
@@ -129,4 +98,5 @@ RSpec.describe Cave do
 ##################        ########     #####################       ################    ##################               #################        ##############           ########################  #
 ##################        ########     #####################       ################    ####################             #################        ##############          #########################  #
 #####################################################################################################################################################################################################"
+  end
 end
