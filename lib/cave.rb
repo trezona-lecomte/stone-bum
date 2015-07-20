@@ -15,24 +15,50 @@ class Cave
 
   def pump(target_units)
     units_left = target_units - current_water_units
-    #binding.pry
 
-    new_cave_state = cave_state.transpose.map do |col|
-      col.map do |char|
-        if char.strip.empty? && units_left > 0
-          units_left -= 1
-          "~"
-        else
-          char
+    starting_pos = [0, 0]
+
+    cave_state.each_with_index do |row, rindex|
+      row.each_with_index do |col, cindex|
+        if cave_state[rindex][cindex] == "~"
+          starting_pos = [rindex, cindex]
         end
       end
     end
 
-    @cave_state = new_cave_state.transpose
+    until units_left == 0
+      next_gap_to_fill = next_gap(starting_pos[0], starting_pos[1])
+
+      @cave_state[next_gap_to_fill[0]][next_gap_to_fill[1]] = "~"
+
+      starting_pos = next_gap_to_fill
+
+      units_left -= 1
+    end
   end
 
   def print_state
     cave_state.map { |row| row.join("") + "\n" }
+  end
+
+  def depths
+    cave_state.transpose.map do |col|
+      if col.include?(" ") && col.include?("~")
+        if col.rindex(" ") > col.rindex("~")
+          "~"
+        else
+          col.count("~")
+        end
+      else
+        col.count("~")
+      end
+    end
+  end
+
+  def save_depths(filename)
+    File.open(filename, "w") do |file|
+      file.puts depths.join(" ")
+    end
   end
 
   private
@@ -46,10 +72,14 @@ class Cave
   def next_gap(row, col)
     if cave_state[row+1][col] == " "
       [row+1, col]
-      # gap below
     elsif cave_state[row][col+1] == " "
-      # gap to the right
       [row, col+1]
+    else
+      (0..col).to_a.each do |col_above|
+        if cave_state[row-1][col_above] == " "
+          return [row-1, col_above]
+        end
+      end
     end
   end
 end
