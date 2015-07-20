@@ -1,6 +1,5 @@
 require "spec_helper"
 require "cave"
-require "pry"
 
 RSpec.describe Cave do
   let(:cave)         { Cave.new(input) }
@@ -10,7 +9,7 @@ RSpec.describe Cave do
     context "when asked for depths for a simple cave" do
       let(:cave_type) { simple_cave }
 
-      before { cave.pump }
+      # before { cave.pump }
 
       it "returns the correct depths" do
         expect(cave.depths).to eq(simple_depths)
@@ -20,7 +19,7 @@ RSpec.describe Cave do
     context "when asked for depths for a complex cave" do
       let(:cave_type) { complex_cave }
 
-      before { cave.pump }
+      # before { cave.pump }
 
       it "returns the correct depths" do
         expect(cave.depths).to eq(complex_depths)

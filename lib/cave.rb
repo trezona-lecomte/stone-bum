@@ -1,37 +1,26 @@
-require "pry"
-
 class Cave
-  attr_reader :target_units, :current_water_units, :cave_state
+  attr_reader :cave_state, :target_units
 
   def initialize(input)
     @target_units = input.readline.to_i
     @cave_state = Array.new
     setup_cave(input)
+    pump(target_units)
   end
 
-  def current_water_units
+  def current_units
     cave_state.map { |row| row.count("~") }.reduce(:+)
   end
 
-  def pump
-    units_left = target_units - current_water_units
+  def pump(units)
+    units_left = units - current_units
 
-    starting_pos = [0, 0]
-
-    cave_state.each_with_index do |row, rindex|
-      row.each_with_index do |col, cindex|
-        if cave_state[rindex][cindex] == "~"
-          starting_pos = [rindex, cindex]
-        end
-      end
-    end
+    current_pos = starting_pos
 
     until units_left == 0
-      next_gap_to_fill = next_gap(starting_pos[0], starting_pos[1])
+      current_pos = next_gap(current_pos[0], current_pos[1])
 
-      @cave_state[next_gap_to_fill[0]][next_gap_to_fill[1]] = "~"
-
-      starting_pos = next_gap_to_fill
+      @cave_state[current_pos[0]][current_pos[1]] = "~"
 
       units_left -= 1
     end
@@ -53,6 +42,16 @@ class Cave
   def setup_cave(input)
     input.each_line do |line|
       cave_state << Array(line.strip.split("")) unless line.strip.empty?
+    end
+  end
+
+  def starting_pos
+    cave_state.each_with_index do |row, rindex|
+      row.each_with_index do |col, cindex|
+        if cave_state[rindex][cindex] == "~"
+          return [rindex, cindex]
+        end
+      end
     end
   end
 
